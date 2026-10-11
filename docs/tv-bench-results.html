@@ -1,0 +1,327 @@
+<title>Google TV vs Fire TV Benchmarks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of chart "panels", each a caption + chart + takeaway, tables at the end. */
+:root {
+  --bg: #f6f7f8; --panel: #ffffff; --fg: #1b2126; --muted: #5d6870; --line: #dde2e6; --grid: #e8ecef;
+  --gtv: #127a86; --gtv2: #7cc4cc; --ftv: #c46a12; --ftv2: #efb878; --old: #9aa5ad;
+  --pass: #2f8a4c; --pass-bg: #e2f2e7; --marg: #a8740e; --marg-bg: #fbf0d6; --fail: #b8382f; --fail-bg: #f8e1df; --na-bg: #eef1f3;
+  --display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12171b; --panel: #192026; --fg: #e3e8ec; --muted: #94a1aa; --line: #2b353d; --grid: #253038;
+  --gtv: #3fb5c2; --gtv2: #1f6b74; --ftv: #f0993f; --ftv2: #8a5420; --old: #5f6b74;
+  --pass: #6fcf8a; --pass-bg: #1d3526; --marg: #e6b54a; --marg-bg: #3a3018; --fail: #f07a70; --fail-bg: #3f2120; --na-bg: #222b32;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #12171b; --panel: #192026; --fg: #e3e8ec; --muted: #94a1aa; --line: #2b353d; --grid: #253038;
+  --gtv: #3fb5c2; --gtv2: #1f6b74; --ftv: #f0993f; --ftv2: #8a5420; --old: #5f6b74;
+  --pass: #6fcf8a; --pass-bg: #1d3526; --marg: #e6b54a; --marg-bg: #3a3018; --fail: #f07a70; --fail-bg: #3f2120; --na-bg: #222b32;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--fg); font: 15px/1.55 var(--body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-inline: 20px; padding-block: 40px 64px; display: grid; gap: 28px; }
+header { display: grid; gap: 10px; }
+.eyebrow { font: 500 12px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+h1 { font: 800 clamp(28px, 5vw, 42px)/1.1 var(--display); margin: 0; text-wrap: balance; letter-spacing: -.01em; }
+h2 { font: 700 21px/1.25 var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; max-width: 68ch; }
+.lede { color: var(--muted); font-size: 16px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.sw { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+.keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.key { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.key .v { font: 700 26px/1.1 var(--display); font-variant-numeric: tabular-nums; }
+.key .v small { font: 500 13px var(--body); color: var(--muted); margin-left: 4px; }
+.key .l { font-size: 13px; color: var(--muted); }
+.key.gtv .v { color: var(--gtv); } .key.ftv .v { color: var(--ftv); }
+
+section.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 22px 22px 20px; display: grid; gap: 14px; min-width: 0; }
+.chart { position: relative; height: 320px; min-width: 0; }
+.chart.tall { height: 380px; }
+.take { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 12px; }
+.take b { color: var(--fg); font-weight: 600; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.two > * { min-width: 0; }
+
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+th, td { padding: 6px 8px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th { font: 600 11px var(--body); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+th:first-child, td:first-child { text-align: left; }
+.heat td { text-align: center; font-weight: 500; border: 2px solid var(--panel); border-radius: 6px; }
+.heat td:first-child { text-align: left; font-weight: 600; background: transparent; }
+.st-PASS { background: var(--pass-bg); color: var(--pass); }
+.st-MARGINAL { background: var(--marg-bg); color: var(--marg); }
+.st-FAIL { background: var(--fail-bg); color: var(--fail); }
+.heat caption { caption-side: top; text-align: left; font: 700 15px var(--display); padding-bottom: 6px; }
+.tag { font: 500 11px var(--mono); padding: 1px 6px; border-radius: 4px; }
+footer { font-size: 13px; color: var(--muted); display: grid; gap: 6px; }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">WebRTC Bench · PC (RTX 5090 Laptop, NVENC) → TV over Wi-Fi · 11 Oct 2026</div>
+    <h1>Google TV vs Fire TV Benchmarks</h1>
+    <p class="lede">Streaming a 4K60 test clip from the PC to each TV three ways: stock WebRTC (Chromium to the TV's WebRTC library), WebRTC tuned for cloud gaming (NVENC frames carried by Chromium's WebRTC, low-latency receive and direct decode on the TV), and a native NVENC → RTP → low-latency MediaCodec path. Latency is from capture on the PC to the frame decoded on the TV, using synchronized clocks; "on screen" adds the TV's display pipeline up to its HDMI output.</p>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--gtv)"></i>Google TV Streamer (MT8696, Android 14)</span>
+      <span><i class="sw" style="background:var(--ftv)"></i>Fire TV AFTHY7ABBA (MT5896, Fire OS 8)</span>
+    </div>
+  </header>
+
+  <div class="keys">
+    <div class="key gtv"><div class="v">16.9<small>ms</small></div><div class="l">Google TV · cloud-gaming WebRTC, H.264 1080p60, capture → decoded (40.6 ms on screen)</div></div>
+    <div class="key ftv"><div class="v">16.6<small>ms</small></div><div class="l">Fire TV · cloud-gaming WebRTC, H.264 1080p60, capture → decoded</div></div>
+    <div class="key"><div class="v">160–177<small>ms</small></div><div class="l">Stock WebRTC, same test, mostly its jitter buffer</div></div>
+    <div class="key"><div class="v">70–73<small>ms</small></div><div class="l">PC screen → TV screen, cloud-gaming mirroring (stock WebRTC 131–134 ms)</div></div>
+  </div>
+
+  <section class="panel">
+    <h2>Stock WebRTC vs cloud-gaming WebRTC vs native (60 fps, H.264)</h2>
+    <p class="lede">Capture → decoded, median, log scale. Pre-encoded: the PC streams frames it encoded beforehand, timestamped when sent, so the number is transfer, receive and decode alone.</p>
+    <div class="two">
+      <div class="chart tall"><canvas id="c-prof-gtv"></canvas></div>
+      <div class="chart tall"><canvas id="c-prof-ftv"></canvas></div>
+    </div>
+    <p class="take"><b>Cloud gaming cuts WebRTC latency about tenfold</b> (117–352 ms down to 12–31 ms) and holds 60 fps up to 4K, where stock WebRTC drops as low as 36 fps on the Google TV. It stays 5–7 ms behind the native path at 1080p: a few ms to hand each frame into Chromium's sender, the rest in the TV's WebRTC receive. <b>Pre-encoded</b> takes encoding out: 12.5–14.2 ms at 1080p over WebRTC and 8.7–9.6 ms native, i.e. transfer plus decode.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Screen mirroring: PC screen → TV screen (1080p60)</h2>
+    <p class="lede">Measured on the TV's own screen: the PC shows a frame-numbered pattern and the TV app captures its screen and times when each frame appears. Includes PC capture, encode, Wi-Fi, decode and the TV compositor.</p>
+    <div class="chart"><canvas id="c-mirror"></canvas></div>
+    <p class="take"><b>Cloud-gaming mirroring halves the delay</b> of stock WebRTC on both TVs and is steadier (p95 within 2–7 ms of the median). <b>Miracast is not measured yet</b>: Fire TV's Miracast receiver takes the TV off Wi-Fi while it runs, so the app now times it offline and collects the results when the TV reconnects; the run needs mirroring started by hand (Win+K). The Google TV has no Miracast receiver.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Native path latency at 60 fps</h2>
+    <p class="lede">Capture → decoded, median, after tuning. Bars per codec and TV.</p>
+    <div class="chart"><canvas id="c-native"></canvas></div>
+    <p class="take"><b>Fire TV decodes faster</b>: its hardware decoder needs about 4 ms per 4K frame, against about 12 ms on the Google TV. <b>H.265 beats H.264 at 4K</b> on both, mostly because the PC encodes it in 2.2 ms instead of 6–7 ms.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Where the time goes on the Google TV (60 fps, native)</h2>
+    <p class="lede">Capture → decoded, plus the wait in the TV's display pipeline until the frame is on its HDMI output.</p>
+    <div class="chart"><canvas id="c-stack"></canvas></div>
+    <p class="take"><b>The display pipeline is the biggest piece</b>: Android's compositor needs frames about 17.5 ms before the refresh that shows them, so 22–25 ms passes between decode and screen at every resolution. Fire OS doesn't report real display times, so this view only exists for the Google TV.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Vsync pacing on the Google TV</h2>
+    <p class="lede">Same tests, PC frame clock free-running versus locked to the TV's display by the pacer. 60 fps, native.</p>
+    <div class="two">
+      <div class="chart"><canvas id="c-pace-fps"></canvas></div>
+      <div class="chart"><canvas id="c-pace-lat"></canvas></div>
+    </div>
+    <p class="take"><b>Free-running is a lottery</b>: depending on where the frame phase lands, the same setup shows 28–50 ms and as few as 51 fps on screen. <b>Locked</b>, it holds 59.4–60.3 fps shown with consistent latency. The one locked dip (H.265 1440p, 55.6 fps) was Wi-Fi packet loss.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Stock WebRTC: decoded fps at a 60 fps target, all codecs</h2>
+    <p class="lede">Default WebRTC settings (earlier full-matrix runs). Cells show decoded fps; colour is the test verdict.</p>
+    <div class="two">
+      <div class="scroll"><table class="heat" id="h-gtv"><caption style="color:var(--gtv)">Google TV</caption></table></div>
+      <div class="scroll"><table class="heat" id="h-ftv"><caption style="color:var(--ftv)">Fire TV</caption></table></div>
+    </div>
+    <p class="take"><b>Google TV</b> tops out around 40–57 fps at 60 fps targets even though its decoder is fast enough; the limit is Android's WebRTC receive path. VP8 collapses above 1080p. <b>Fire TV</b> holds about 59 fps up to 1440p60, but VP8 above 1080p and AV1 at 1440p+ produce no video at all. At 30 fps both TVs mostly pass up to 4K.</p>
+  </section>
+
+
+  <section class="panel">
+    <h2>Before and after tuning (native, 60 fps)</h2>
+    <p class="lede">Capture → decoded, median. Before: NVENC preset P3, old receiver. After: preset P1, three-way H.265 split encode, decoder backlog fix, vsync pacing.</p>
+    <div class="chart tall"><canvas id="c-ba"></canvas></div>
+    <p class="take"><b>Fire TV's H.264 decoder had been holding 2–4 frames</b> in some tests (43–79 ms); that is gone. On the Google TV the gains are at 1440p and 4K, from faster encoding: 4K H.264 dropped from 28.8 to 23.5 ms and 4K H.265 from 23.2 to 18.5 ms.</p>
+  </section>
+
+  <section class="panel">
+    <h2>All WebRTC and native results, 60 fps</h2>
+    <p class="lede">Capture → decoded, median ms. Stock WebRTC shows decoded fps where it fell below 57; every other cell held 60 fps.</p>
+    <div class="scroll"><table id="t-prof"></table></div>
+  </section>
+
+  <section class="panel">
+    <h2>All native results after tuning</h2>
+    <div class="scroll"><table id="t-all"></table></div>
+  </section>
+
+  <footer>
+    <p>Each test: 5 s warm-up, 10 s measured, Big Buck Bunny 4K60 clip from 2:30, "Normal" bitrate (4/8/14/25 Mbps at 720p/1080p/1440p/4K, ×1.5 at 60 fps). Clock sync error is at most half the ping round trip (about 1 ms). Panel processing inside the TV set is not included.</p>
+    <p>Profile comparison: 5 s warm-up, 8 s measured per test. Mirroring: 6 s warm-up, 15 s measured. Stock WebRTC numbers were re-measured after fixing a PC-side stall (Chromium's GPU process waited on the PC monitor's vsync, which throttled the source when a 4K TV was the PC monitor).</p>
+    <p>Source reports: WebRTCBench_Comparison (from WebRTCBench_&lt;Shed|FireTV&gt;_WebRTC-standard_live, _WebRTC-gaming_live, _WebRTC-gaming_preencoded, _Native_live, _Native_preencoded, _Mirror_WebRTC-standard, _Mirror_WebRTC-gaming), WebRTCBench_Shed_Native-tuned_vsync-pacing, WebRTCBench_FireTV_Native-tuned, WebRTCBench_Shed_full-matrix_40-tests, WebRTCBench_FireTV_full-matrix_56-tests, plus the pacing A/B runs in reports/dev-runs.</p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const RES = [720, 1080, 1440, 2160];
+const RL = { 720: '720p', 1080: '1080p', 1440: '1440p', 2160: '4K' };
+
+// Native, after tuning (60 + 30 fps)
+const gtvN = [
+ ['H264',720,30,30.3,10.5,15.0,36.4,4.4,1.09,'PASS'],['H265',720,30,30.2,10.2,13.5,35.1,4.6,1.12,'PASS'],
+ ['H264',720,60,60.5,8.4,11.5,32.3,4.1,0.89,'PASS'],['H265',720,60,59.7,8.4,11.3,32.3,4.0,0.89,'PASS'],
+ ['H264',1080,30,30.2,12.8,17.7,39.3,5.8,1.58,'PASS'],['H265',1080,30,30.2,11.5,14.2,36.6,5.5,1.11,'PASS'],
+ ['H264',1080,60,60.3,11.2,13.5,34.6,5.3,1.55,'PASS'],['H265',1080,60,60.5,10.3,12.8,34.0,5.0,1.23,'PASS'],
+ ['H264',1440,30,30.2,16.0,20.5,41.4,7.6,2.91,'PASS'],['H265',1440,30,29.8,13.9,16.6,38.4,7.6,1.30,'MARGINAL'],
+ ['H264',1440,60,59.4,15.2,18.6,40.4,7.4,2.82,'PASS'],['H265',1440,60,55.6,13.5,16.0,37.3,7.0,1.22,'MARGINAL'],
+ ['H264',2160,30,30.2,23.7,27.9,51.6,12.6,5.21,'PASS'],['H265',2160,30,30.2,20.1,23.8,45.9,12.3,2.45,'PASS'],
+ ['H264',2160,60,60.5,23.5,27.2,48.7,12.0,5.95,'PASS'],['H265',2160,60,60.4,18.5,22.3,42.9,11.3,2.20,'PASS'],
+];
+const ftvN = [
+ ['H264',720,30,30.2,8.9,10.2,null,3.2,0.93,'PASS'],['H265',720,30,30.2,9.1,10.5,null,3.4,1.13,'PASS'],
+ ['H264',720,60,60.4,8.2,10.8,null,3.6,0.87,'PASS'],['H265',720,60,60.4,8.0,10.8,null,3.7,0.83,'PASS'],
+ ['H264',1080,30,30.2,11.9,13.5,null,4.3,1.58,'PASS'],['H265',1080,30,30.1,10.0,11.8,null,3.6,1.12,'PASS'],
+ ['H264',1080,60,60.3,9.9,12.4,null,3.5,1.46,'PASS'],['H265',1080,60,60.4,11.0,13.0,null,4.4,1.01,'PASS'],
+ ['H264',1440,30,30.2,14.3,16.1,null,3.5,2.79,'PASS'],['H265',1440,30,30.2,11.3,13.1,null,3.8,1.29,'PASS'],
+ ['H264',1440,60,60.3,13.2,15.8,null,4.5,2.78,'PASS'],['H265',1440,60,60.4,10.5,14.1,null,4.1,1.31,'PASS'],
+ ['H264',2160,30,30.2,18.6,21.1,null,3.8,7.04,'PASS'],['H265',2160,30,30.1,14.7,17.2,null,4.4,2.30,'PASS'],
+ ['H264',2160,60,60.4,17.5,21.9,null,3.8,7.03,'PASS'],['H265',2160,60,60.4,12.4,15.2,null,3.9,2.21,'PASS'],
+];
+const pick = (rows, c, f, i) => RES.map(h => rows.find(r => r[0] === c && r[1] === h && r[2] === f)[i]);
+
+// Before tuning (60 fps, native, capture -> decoded)
+const before = { gtv: { H264: [8.8, 11.3, 15.4, 28.8], H265: [9.9, 12.3, 17.7, 23.2] }, ftv: { H264: [50, 10, 43, 79], H265: [9, 12, 14, 16] } };
+// Pacing A/B, Google TV, 60 fps, native (8 tests): shown fps and capture -> on screen
+const paceLabels = RES.flatMap(h => ['H.264', 'H.265'].map(c => `${c} ${RL[h]}`));
+const paceOff = { fps: [56.3, 57.4, 59.8, 60.4, 51.2, 58.1, 60.2, 57.6], scr: [28.4, 41.1, 38.8, 39.1, 33.2, 36.5, 50.0, 40.0] };
+const paceOn = { fps: [60.3, 59.5, 60.2, 60.2, 59.4, 55.6, 59.9, 60.0], scr: [32.3, 32.3, 34.6, 34.0, 40.4, 37.3, 48.7, 42.9] };
+// WebRTC decoded fps at 60 fps target [fps, status]
+const CODECS = ['H264', 'VP8', 'VP9', 'AV1', 'H265'];
+const CL = { H264: 'H.264', H265: 'H.265', VP8: 'VP8', VP9: 'VP9', AV1: 'AV1' };
+const wGtv = { H264: [[52.9,'MARGINAL'],[52.3,'MARGINAL'],[51.3,'MARGINAL'],[41.1,'FAIL']], VP8: [[59.4,'PASS'],[40.1,'FAIL'],[14.2,'FAIL'],[7.2,'FAIL']], VP9: [[56.8,'MARGINAL'],[57.0,'MARGINAL'],[40.1,'FAIL'],[40.2,'FAIL']], AV1: [[56.5,'MARGINAL'],[57.9,'MARGINAL'],[42.0,'FAIL'],[42.1,'FAIL']], H265: [[55.3,'MARGINAL'],[54.6,'MARGINAL'],[38.8,'FAIL'],[24.5,'FAIL']] };
+const wFtv = { H264: [[58.9,'MARGINAL'],[52.9,'MARGINAL'],[59.7,'PASS'],[52.1,'MARGINAL']], VP8: [[59.4,'PASS'],[59.0,'MARGINAL'],[0,'FAIL'],[0,'FAIL']], VP9: [[58.7,'MARGINAL'],[58.8,'MARGINAL'],[59.8,'PASS'],[56.2,'MARGINAL']], AV1: [[60.0,'PASS'],[59.6,'PASS'],[0,'FAIL'],[0,'FAIL']], H265: [[58.7,'MARGINAL'],[59.0,'MARGINAL'],[59.6,'PASS'],[57.0,'MARGINAL']] };
+// WebRTC profiles vs native, 60 fps, capture -> decoded median per resolution (WebRTCBench_Comparison)
+const prof = {
+  gtv: {
+    std: { H264: [120.8, 160.1, 203.1, 214.6], H265: [119.4, 190.5, 352.0, 142.0] },
+    stdFps: { H264: [58.5, 58.8, 57.8, 40.4], H265: [58.9, 59.1, 37.3, 36.4] },
+    gam: { H264: [12.5, 16.9, 20.4, 31.0], H265: [13.5, 15.7, 18.2, 24.8] },
+    gamP: { H264: [11.2, 14.2, 17.3, 24.9], H265: [11.6, 12.9, 17.1, 22.3] },
+    nat: { H264: [8.4, 11.0, 14.6, 24.7], H265: [8.4, 9.8, 13.5, 19.0] },
+    natP: { H264: [7.0, 8.7, 11.8, 16.2], H265: [6.8, 8.2, 11.3, 15.6] },
+    gamScr: { H264: [36.8, 40.6, 45.4, 57.0], H265: [39.2, 39.6, 43.7, 49.9] },
+  },
+  ftv: {
+    std: { H264: [116.9, 176.8, 227.9, 204.6], H265: [175.5, 316.8, 246.3, 145.9] },
+    stdFps: { H264: [58.2, 58.1, 59.5, 48.5], H265: [59.5, 59.6, 59.5, 57.9] },
+    gam: { H264: [12.2, 16.6, 19.8, 24.6], H265: [12.6, 15.9, 16.1, 21.3] },
+    gamP: { H264: [12.0, 12.5, 15.7, 22.3], H265: [10.4, 13.4, 15.0, 19.7] },
+    nat: { H264: [8.1, 11.2, 12.0, 18.6], H265: [8.2, 9.1, 11.0, 14.4] },
+    natP: { H264: [8.3, 9.6, 8.8, 12.4], H265: [6.7, 8.6, 8.7, 10.6] },
+  },
+};
+// PC screen -> TV screen, 1080p60 mirroring [median, p95]
+const mirror = { gtv: { std: [133.9, 150.8], gam: [72.6, 79.7] }, ftv: { std: [131.0, 147.2], gam: [69.6, 71.3] } };
+
+// ---- tables
+function heat(id, data) {
+  const t = document.getElementById(id);
+  t.insertAdjacentHTML('beforeend', '<thead><tr><th>Codec</th>' + RES.map(h => `<th>${RL[h]}60</th>`).join('') + '</tr></thead>');
+  t.insertAdjacentHTML('beforeend', '<tbody>' + CODECS.map(c => `<tr><td>${CL[c]}</td>` + data[c].map(([v, s]) => `<td class="st-${s}">${v ? v.toFixed(1) : 'no video'}</td>`).join('') + '</tr>').join('') + '</tbody>');
+}
+heat('h-gtv', wGtv);
+heat('h-ftv', wFtv);
+(function () {
+  const t = document.getElementById('t-prof');
+  const f = (v) => (v == null ? '–' : v.toFixed(1));
+  let html = '<thead><tr><th>Test</th><th>Stock WebRTC</th><th>Cloud gaming</th><th>Gaming pre-enc.</th><th>Native</th><th>Native pre-enc.</th><th>Gaming on screen</th></tr></thead><tbody>';
+  for (const [tv, name] of [['gtv', 'Google TV'], ['ftv', 'Fire TV']]) for (const c of ['H264', 'H265']) RES.forEach((h, i) => {
+    const p = prof[tv], fps = p.stdFps[c][i];
+    html += `<tr><td>${name} · ${CL[c]} ${RL[h]}</td><td>${f(p.std[c][i])}${fps < 57 ? ` <span class="tag st-FAIL">${fps.toFixed(0)} fps</span>` : ''}</td><td>${f(p.gam[c][i])}</td><td>${f(p.gamP[c][i])}</td><td>${f(p.nat[c][i])}</td><td>${f(p.natP[c][i])}</td><td>${f(p.gamScr?.[c][i])}</td></tr>`;
+  });
+  t.innerHTML = html + '</tbody>';
+})();
+(function () {
+  const t = document.getElementById('t-all');
+  const f = (v, d = 1) => v == null ? '–' : v.toFixed(d);
+  let html = '<thead><tr><th>Test</th><th>GTV fps</th><th>GTV decoded ms</th><th>p95</th><th>GTV on screen ms</th><th>GTV decode ms/frame</th><th>Fire fps</th><th>Fire decoded ms</th><th>p95</th><th>Fire decode ms/frame</th><th>PC encode ms</th></tr></thead><tbody>';
+  for (const fps of [60, 30]) for (const h of RES) for (const c of ['H264', 'H265']) {
+    const g = gtvN.find(r => r[0] === c && r[1] === h && r[2] === fps), x = ftvN.find(r => r[0] === c && r[1] === h && r[2] === fps);
+    html += `<tr><td>${CL[c]} ${RL[h]} @ ${fps}</td><td class="st-${g[9]}">${f(g[3])}</td><td>${f(g[4])}</td><td>${f(g[5])}</td><td>${f(g[6])}</td><td>${f(g[7])}</td><td class="st-${x[9]}">${f(x[3])}</td><td>${f(x[4])}</td><td>${f(x[5])}</td><td>${f(x[7])}</td><td>${f(g[8], 2)}</td></tr>`;
+  }
+  t.innerHTML = html + '</tbody>';
+})();
+
+// ---- charts
+const charts = [];
+function css(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function base(yTitle, extra = {}) {
+  const fg = css('--fg'), muted = css('--muted'), grid = css('--grid');
+  return {
+    responsive: true, maintainAspectRatio: false, animation: false,
+    plugins: { legend: { labels: { color: fg, boxWidth: 12, boxHeight: 12, font: { family: 'IBM Plex Sans', size: 12 } } },
+      tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y ?? '–'}${yTitle.includes('fps') ? ' fps' : ' ms'}` } } },
+    scales: {
+      x: { ticks: { color: muted, font: { family: 'IBM Plex Mono', size: 11 } }, grid: { display: false }, ...(extra.x || {}) },
+      y: { beginAtZero: true, title: { display: true, text: yTitle, color: muted, font: { family: 'IBM Plex Sans', size: 12 } },
+        ticks: { color: muted, font: { family: 'IBM Plex Mono', size: 11 } }, grid: { color: grid }, ...(extra.y || {}) },
+    },
+  };
+}
+function bar(id, labels, datasets, yTitle, extra) {
+  charts.push(new Chart(document.getElementById(id), { type: 'bar', data: { labels, datasets }, options: base(yTitle, extra) }));
+}
+function draw() {
+  charts.splice(0).forEach(c => c.destroy());
+  const C = (n) => css(n);
+  const resL = RES.map(h => RL[h]);
+  const ds = (label, data, color) => ({ label, data, backgroundColor: color, borderRadius: 3, maxBarThickness: 34 });
+
+  bar('c-native', resL, [
+    ds('Google TV H.264', pick(gtvN, 'H264', 60, 4), C('--gtv')), ds('Google TV H.265', pick(gtvN, 'H265', 60, 4), C('--gtv2')),
+    ds('Fire TV H.264', pick(ftvN, 'H264', 60, 4), C('--ftv')), ds('Fire TV H.265', pick(ftvN, 'H265', 60, 4), C('--ftv2')),
+  ], 'ms, capture → decoded');
+
+  const lbl = RES.flatMap(h => [`H.264 ${RL[h]}`, `H.265 ${RL[h]}`]);
+  const dec = RES.flatMap(h => [gtvN.find(r => r[0] === 'H264' && r[1] === h && r[2] === 60)[4], gtvN.find(r => r[0] === 'H265' && r[1] === h && r[2] === 60)[4]]);
+  const scr = RES.flatMap(h => [gtvN.find(r => r[0] === 'H264' && r[1] === h && r[2] === 60)[6], gtvN.find(r => r[0] === 'H265' && r[1] === h && r[2] === 60)[6]]);
+  bar('c-stack', lbl, [
+    ds('Capture → decoded', dec, C('--gtv')),
+    ds('Decoded → on screen', scr.map((s, i) => +(s - dec[i]).toFixed(1)), C('--gtv2')),
+  ], 'ms, capture → on screen', { x: { stacked: true }, y: { stacked: true } });
+
+  bar('c-pace-fps', paceLabels, [ds('Free-running', paceOff.fps, C('--old')), ds('Vsync-locked', paceOn.fps, C('--gtv'))], 'fps shown on screen', { y: { beginAtZero: false, min: 48, max: 61 } });
+  bar('c-pace-lat', paceLabels, [ds('Free-running', paceOff.scr, C('--old')), ds('Vsync-locked', paceOn.scr, C('--gtv'))], 'ms, capture → on screen');
+
+  for (const [tv, name] of [['gtv', 'Google TV'], ['ftv', 'Fire TV']]) {
+    const p = prof[tv];
+    bar(`c-prof-${tv}`, resL, [
+      ds('Stock WebRTC', p.std.H264, C('--old')),
+      ds('Cloud gaming', p.gam.H264, C(`--${tv}`)),
+      ds('Cloud gaming, pre-encoded', p.gamP.H264, C(`--${tv}2`)),
+      ds('Native', p.nat.H264, C('--fg')),
+      ds('Native, pre-encoded', p.natP.H264, C('--muted')),
+    ], `${name} · ms, capture → decoded (log)`, { y: { type: 'logarithmic', beginAtZero: false, min: 5, max: 400 } });
+  }
+
+  bar('c-mirror', ['Google TV', 'Fire TV'], [
+    ds('Stock WebRTC, median', [mirror.gtv.std[0], mirror.ftv.std[0]], C('--old')),
+    ds('Stock WebRTC, p95', [mirror.gtv.std[1], mirror.ftv.std[1]], C('--grid')),
+    ds('Cloud gaming, median', [mirror.gtv.gam[0], mirror.ftv.gam[0]], C('--gtv')),
+    ds('Cloud gaming, p95', [mirror.gtv.gam[1], mirror.ftv.gam[1]], C('--gtv2')),
+  ], 'ms, PC screen → TV screen');
+
+  const baLabels = RES.flatMap(h => [`H.264 ${RL[h]}`, `H.265 ${RL[h]}`]);
+  const inter = (o) => RES.flatMap((_, i) => [o.H264[i], o.H265[i]]);
+  const after = (rows) => RES.flatMap(h => ['H264', 'H265'].map(c => rows.find(r => r[0] === c && r[1] === h && r[2] === 60)[4]));
+  bar('c-ba', baLabels, [
+    ds('Google TV before', inter(before.gtv), C('--gtv2')), ds('Google TV after', after(gtvN), C('--gtv')),
+    ds('Fire TV before', inter(before.ftv), C('--ftv2')), ds('Fire TV after', after(ftvN), C('--ftv')),
+  ], 'ms, capture → decoded');
+}
+if (window.Chart) {
+  Chart.defaults.font.family = 'IBM Plex Sans';
+  draw();
+  try { matchMedia('(prefers-color-scheme: dark)').addEventListener('change', draw); } catch (e) {}
+  new MutationObserver(draw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+</script>

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: mediastream:; connect-src 'self' ws:; worker-src 'self' blob:">
+  <title>WebRTC Bench</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="/__assets/icon.png" alt="">
+      <span>WebRTC Bench</span>
+    </div>
+    <div class="topbar-meta" id="desktopMeta"></div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <section class="side-section">
+        <div class="side-title"><span>Receivers on your network</span><span class="scan" title="Scanning"></span></div>
+        <div id="deviceList" class="device-list"></div>
+        <form id="manualForm" class="manual" autocomplete="off">
+          <input id="manualIp" placeholder="Add by IP address" spellcheck="false">
+          <button type="submit" class="btn btn-small">Add</button>
+        </form>
+      </section>
+      <section class="side-section" id="adbSection"></section>
+    </aside>
+
+    <main class="main" id="main">
+      <section class="card" id="receiverCard"></section>
+      <section class="card" id="videoCard"></section>
+      <section class="card" id="matrixCard"></section>
+      <section class="card" id="runCard"></section>
+      <section class="card" id="resultsCard" hidden></section>
+    </main>
+  </div>
+
+  <dialog id="pinDialog" class="dialog">
+    <form method="dialog" id="pinForm">
+      <h2>Pair with <span id="pinTvName">TV</span></h2>
+      <p class="muted">A 6-digit PIN is showing on the TV. Enter it here.</p>
+      <input id="pinInput" class="pin-input" inputmode="numeric" maxlength="7" autocomplete="off" placeholder="000 000">
+      <p id="pinError" class="error-text"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="pinCancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="pinSubmit">Pair</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>

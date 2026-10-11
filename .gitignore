@@ -1,0 +1,19 @@
+desktop/node_modules/
+native/build/
+release/
+android/.gradle/
+android/.kotlin/
+android/build/
+android/app/build/
+android/local.properties
+videos/*.mp4
+videos/_dl/
+reports/
+_shots/
+
+# Built binaries (build them from source, see README)
+*.apk
+*.exe
+
+# Local device notes (LAN addresses and device serials)
+GOOGLE_TV_ADB.txt

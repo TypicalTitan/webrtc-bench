@@ -1,0 +1,21 @@
+{
+  "name": "webrtc-bench",
+  "productName": "WebRTC Bench",
+  "version": "1.0.0",
+  "description": "Benchmark WebRTC video streaming from this PC to a Google TV receiver",
+  "main": "main.js",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "package": "electron-packager . \"WebRTC Bench\" --platform=win32 --arch=x64 --out=../release --overwrite --icon=assets/icon.ico --extra-resource=../WebRTCBench-TV.apk --extra-resource=../native/build/wbsend.exe"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0",
+    "extract-zip": "^2.0.1"
+  },
+  "devDependencies": {
+    "@electron/packager": "^20.3.0",
+    "electron": "^44.7.0"
+  }
+}
